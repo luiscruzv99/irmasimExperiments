@@ -1,0 +1,90 @@
+#! /usr/bin/python3
+import json, sys
+
+options = {
+    "seed": 1995,
+    "workload_file": "workload.json",
+    "platform_file": "platform.json",
+    "platform_name": "the_platform",
+}
+
+workload_managers = {
+    "Heuristic": {"job_selection": "", "resource_selection": ""},
+    "Energy": {"job_prio": "", "node_prio": "", "criterion": ""},
+}
+
+policies = {
+    "job_selection": [
+        "random",
+        "first",
+        "shortest",
+        "smallest",
+        "low_mem",
+        "low_mem_ops",
+    ],
+    "resource_selection": [
+        "random",
+        "first",
+        "high_gflops",
+        "high_cores",
+        "high_mem",
+        "high_mem_bw",
+        "low_power",
+    ],
+    "Energy": ["lo_first", "hi_first"],
+    "criterion": ["energy", "edp"],
+}
+
+if __name__ == "__main__":
+    if len(sys.argv) < 4:
+        print(
+            "Error: must supply a workload manager specification."
+            + "\n\nA workload manager (wm) specification is defined by the"
+            + "\nobjective to optimise (time, energy or edp) followed by"
+            + "\nthe job selection policy and the node selection policy"
+        )
+        sys.exit(1)
+
+    # TODO: Como hago esto?: primer param -> tipo de wm (string) [Heur, ener, edp]
+    # TODO: segundo param -> job_selection / job_priority (int)
+    # TODO: tercer param -> resource_selection / node_priority
+    wm = "Heuristic"
+    criterion = 0
+    if sys.argv[1] == "energy":
+        wm = "Energy"
+    elif sys.argv[1] == "edp":
+        wm = "Energy"
+        criterion = 1
+
+    wm_data = workload_managers[wm]
+    try:
+        if wm == "Heuristic":
+            wm_data["job_selection"] = policies["job_selection"][int(sys.argv[2])]
+            wm_data["resource_selection"] = policies["resource_selection"][
+                int(sys.argv[3])
+            ]
+        else:
+            wm_data["criterion"] = policies["criterion"][criterion]
+            wm_data["job_prio"] = policies["Energy"][int(sys.argv[2])]
+            wm_data["node_prio"] = policies["Energy"][int(sys.argv[3])]
+
+        wm_data["type"] = wm
+        options["workload_manager"] = wm_data
+        with open("options.json", "w") as f:
+            json.dump(options, f, indent=2)
+
+    except IndexError:
+        print(
+            "Error: policy not in list"
+            + "\n\n Workload manager: "
+            + wm
+            + " only has the following available policies:"
+        )
+        if wm == "Heuristic":
+            print("Job selection:")
+            print(policies["job_selection"])
+            print("Resource selection:")
+            print(policies["resource_selection"])
+        else:
+            print("Job and node priority:")
+            print(policies["Energy"])

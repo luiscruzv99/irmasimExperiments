@@ -1,0 +1,61 @@
+#!/usr/bin/python3
+
+import json, sys
+
+workload = {
+    "jobs": [],
+    "profiles": {
+        "High_Intensity": {
+            "req_time": 10,
+            "req_energy": 3.1681,
+            "req_ops": 10000000000,
+            "ipc": 1,
+            "mem": 1100,
+            "mem_vol": 19,
+        },
+        "Med_Intensity": {
+            "req_time": 5,
+            "req_energy": 1.840555,
+            "req_ops": 5000000000,
+            "ipc": 1,
+            "mem": 1100,
+            "mem_vol": 19,
+        },
+        "Low_Intensity": {
+            "req_time": 1,
+            "req_energy": 0.36811111,
+            "req_ops": 1000000000,
+            "ipc": 1,
+            "mem": 1100,
+            "mem_vol": 19,
+        },
+    },
+}
+
+if len(sys.argv) < 2:
+    print(
+        "Error: must supply at least one job specification."
+        + "\n\nA job is specified with three numbers, separated by commas."
+        + "The first is the submission time,"
+        + " the next one is the number of sub-tasks, and the last one"
+        + " is the profile of the task (0 High intensity / 1 Med intensity / 2 Low Intensity)"
+    )
+
+profiles = ["High_Intensity", "Med_Intensity", "Low_Intensity"]
+
+jobs = []
+
+for param in sys.argv[1:]:
+    jobs.append([int(x) for x in param.split(",")])
+
+
+i = 0
+for subtime, subtasks, prof in jobs:
+    i += 1
+    profile = profiles[prof]
+    workload["jobs"].append(
+        {"id": str(i), "subtime": subtime, "res": subtasks, "profile": profile}
+    )
+
+with open("workload.json", "w") as f:
+    json.dump(workload, f, indent=2)
