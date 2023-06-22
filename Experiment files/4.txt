@@ -1,11 +1,11 @@
 experiment: 
-Error
+Error-2
 ---
 options: 
-edp 1 0
-edp 0 0
-edp 0 1
-edp 1 1
+energy 0 0
+energy 0 1
+energy 1 0
+energy 1 1
 ---
 workload:
 0,4,0

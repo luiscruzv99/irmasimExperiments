@@ -169,9 +169,9 @@ if __name__ == "__main__":
             os.replace("resources.log", options[3][0] + '/' + option + ' results/resources.csv')
             os.replace("simulation.log", options[3][0] + '/' + option + ' results/simulation.csv')
 
-            if len(j) < 30:
+            if len(j) < 100:
                 generate_job_graph(j)
-            os.replace("jobs.png", options[3][0] + '/' + option + ' results/jobs.png')
+                os.replace("jobs.png", options[3][0] + '/' + option + ' results/jobs.png')
 
             re = s[['time', 'energy', 'edp']].tail(1).values.tolist()[0]
 
@@ -184,9 +184,9 @@ if __name__ == "__main__":
                                   DETAILS[params[0]][0][int(params[1])]+"\n"
                                   + DETAILS[params[0]][1][int(params[2])])
 
-        except:
-            print("WM already tested, skipping")
+        except Exception as e:
+            print("WM already tested, skipping", e)
 
     generate_comparison(results, results_legend)
-    os.replace("platform.json", options[3][0] + '/platform.json')
+    # os.replace("platform.json", options[3][0] + '/platform.json')
     os.replace("workload.json", options[3][0] + '/workload.json')

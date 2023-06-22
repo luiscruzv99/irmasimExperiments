@@ -46,15 +46,15 @@ profiles = ["High_Intensity", "Med_Intensity", "Low_Intensity"]
 jobs = []
 
 for param in sys.argv[1:]:
-    jobs.append([int(x) for x in param.split(",")])
+    jobs.append([float(x) for x in param.split(",")])
 
 
 i = 0
 for subtime, subtasks, prof in jobs:
     i += 1
-    profile = profiles[prof]
+    profile = profiles[int(prof)]
     workload["jobs"].append(
-        {"id": str(i), "subtime": subtime, "res": subtasks, "profile": profile}
+        {"id": str(i), "subtime": subtime, "res": int(subtasks), "profile": profile}
     )
 
 with open("workload.json", "w") as f:
