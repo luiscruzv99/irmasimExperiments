@@ -1,3 +1,4 @@
+import csv
 import sys
 import re
 import os
@@ -105,9 +106,10 @@ def generate_energy(simulation: pd.DataFrame):
 def generate_comparison(values: dict, legend: list):
     x = np.arange(len(legend))
     for k, v in values.items():
-        plt.bar(x, v)
+        h = plt.bar(x, v)
         plt.xticks(x, legend)
         plt.ylim([min(v) * 0.85, max(v) * 1.15])
+        plt.bar_label(h)
         plt.title(k)
         save_graph(options[3][0] + "/" + k)
 
@@ -188,5 +190,12 @@ if __name__ == "__main__":
             print("WM already tested, skipping", e)
 
     generate_comparison(results, results_legend)
+
+    f = open("Results.csv", "w")
+    w = csv.writer(f)
+    w.writerow(options[2])
+    w.writerows(results.values())
+    f.close()
+    os.replace("Results.csv", options[3][0] + '/Results.csv')
     # os.replace("platform.json", options[3][0] + '/platform.json')
     os.replace("workload.json", options[3][0] + '/workload.json')

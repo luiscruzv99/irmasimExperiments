@@ -1,17 +1,19 @@
 experiment: 
-EDP-1
+en_lo_hi
 ---
 options: 
-edp 1 0
-edp 0 0
-edp 0 1
-edp 1 1
+energy 0 0
+energy 0 1
+energy 1 0
+energy 1 1
+heuristic 1 2
 ---
 workload:
-0,4,0
 0,4,2
-0.01,2,2
-0.01,2,0
-5,4,0
-5,4,2
+0.01,4,0
+0.02,4,1
+1,4,2
+1.2,2,1
+1.4,2,0
+1.8,2,2
 ---
