@@ -3,10 +3,13 @@ test
 ---
 options: 
 heuristic 1 2
+heuristic 1 6
+heuristic 1 1
+heuristic 2 6
+heuristic 3 6
 energy 1 0
 edp 1 0
 ---
 platform:
 1,1,64
-2,2,48
 4,4,8
