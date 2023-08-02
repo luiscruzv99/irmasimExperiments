@@ -42,8 +42,8 @@ def get_style(row: pd.DataFrame) -> str:
 
 
 def random_color(row: pd.DataFrame) -> list:
-    seed = int(row['id'])
-    r.seed(seed)
+    #seed = int(row['id'])
+    #r.seed(seed)
     red = (r.randint(0, 16) + 16) / 32
     green = (r.randint(0, 2) + 1) / 8
     blue = (r.randint(0, 3) + 1) / 8
@@ -63,7 +63,7 @@ def load_results(jobs_file: str, simulation_file: str) -> tuple:
     jobs = pd.read_csv(jobs_file, sep=',')
     jobs['color'] = jobs.apply(random_color, axis=1)
     jobs['resources'] = jobs.apply(rename_res, axis=1)
-    jobs['style'] = jobs.apply(get_style, axis=1)
+    #jobs['style'] = jobs.apply(get_style, axis=1)
     simulation = pd.read_csv(simulation_file, sep=',')
     simulation['edp'] = simulation['time'] * simulation['energy']
     return jobs, simulation
@@ -148,45 +148,52 @@ if __name__ == "__main__":
         print("Experiment name already exists in directory")
         exit(1)
 
-    # os.system('python3 ./generate_platform ' + platform_args)
-    os.system('python3 ./generate_workload ' + workload_args)
+    os.system('python3 ./generate_platform ' + platform_args)
+    #os.system('python3 ./generate_workload ' + workload_args)
 
     results = {'Time (s)': [], 'Energy (J)': [], 'Energy Delay Product': []}
     results_legend = []
 
     for option in options[2]:
-        try:
-            os.mkdir(options[3][0] + '/' + option + ' results')
+        #try:
+        os.mkdir(options[3][0] + '/' + option + ' results')
 
-            os.system('python3 ./generate_options ' + option)
-            os.system('irmasim options.json')
+        os.system('python3 ./generate_options ' + option)
+        os.system('irmasim options.json')
 
-            j, s = load_results("jobs.log", "simulation.log")
+        j, s = load_results("jobs.log", "simulation.log")
 
-            os.replace("options.json", options[3][0] + '/' + option + ' results/options.json')
-            os.replace("irmasim.log", options[3][0] + '/' + option + ' results/irmasim.csv')
-            os.replace("jobs.log", options[3][0] + '/' + option + ' results/jobs.csv')
-            os.replace("resources.log", options[3][0] + '/' + option + ' results/resources.csv')
-            os.replace("simulation.log", options[3][0] + '/' + option + ' results/simulation.csv')
+        os.replace("options.json", options[3][0] + '/' + option + ' results/options.json')
+        os.replace("irmasim.log", options[3][0] + '/' + option + ' results/irmasim.csv')
+        os.replace("jobs.log", options[3][0] + '/' + option + ' results/jobs.csv')
+        os.replace("resources.log", options[3][0] + '/' + option + ' results/resources.csv')
+        os.replace("simulation.log", options[3][0] + '/' + option + ' results/simulation.csv')
 
-            if len(j) < 30:
-                generate_job_graph(j)
+        if len(j) < 100:
+            generate_job_graph(j)
             os.replace("jobs.png", options[3][0] + '/' + option + ' results/jobs.png')
 
-            re = s[['time', 'energy', 'edp']].tail(1).values.tolist()[0]
+        re = s[['time', 'energy', 'edp']].tail(1).values.tolist()[0]
 
-            results['Time (s)'].append(re[0])
-            results['Energy (J)'].append(re[1])
-            results['Energy Delay Product'].append(re[2])
+        results['Time (s)'].append(re[0])
+        results['Energy (J)'].append(re[1])
+        results['Energy Delay Product'].append(re[2])
 
-            params = option.split()
-            results_legend.append(params[0]+"\n" +
-                                  DETAILS[params[0]][0][int(params[1])]+"\n"
-                                  + DETAILS[params[0]][1][int(params[2])])
+        params = option.split()
+        results_legend.append(params[0]+"\n" +
+                              DETAILS[params[0]][0][int(params[1])]+"\n"
+                              + DETAILS[params[0]][1][int(params[2])])
 
-        except:
-            print("WM already tested, skipping")
+        #except Exception as e:
+            #print("WM already tested, skipping", e)
 
     generate_comparison(results, results_legend)
+
+    f = open("Results.csv", "w")
+    w = csv.writer(f)
+    w.writerow(options[2])
+    w.writerows(results.values())
+    f.close()
+    os.replace("Results.csv", options[3][0] + '/Results.csv')
     os.replace("platform.json", options[3][0] + '/platform.json')
-    os.replace("workload.json", options[3][0] + '/workload.json')
+    #os.replace("workload.json", options[3][0] + '/workload.json')

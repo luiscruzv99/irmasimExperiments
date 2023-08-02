@@ -45,9 +45,6 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
-    # TODO: Como hago esto?: primer param -> tipo de wm (string) [Heur, ener, edp]
-    # TODO: segundo param -> job_selection / job_priority (int)
-    # TODO: tercer param -> resource_selection / node_priority
     wm = "Heuristic"
     criterion = 0
     if sys.argv[1] == "energy":

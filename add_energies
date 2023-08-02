@@ -1,0 +1,12 @@
+#! /bin/python3
+
+import json
+
+with open("workload_mvl.json") as json_file:
+    data = json.load(json_file)
+
+    for d in data["jobs"]:
+        d["req_energy"] = d["req_time"] * 3
+
+    with open("workload.json", "w") as f:
+        json.dump(data, f, indent=4, sort_keys=True)
