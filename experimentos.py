@@ -1,6 +1,8 @@
 import sys
 import re
 import os
+import argparse
+import shutil
 import csv
 
 import pandas as pd
@@ -124,16 +126,23 @@ def compare_simulations(simulations: list):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) < 2:
-        print(
-            "Error: must specify a file containing a valid experiment configuration"
-        )
+    parser = argparse.ArgumentParser(
+                prog='Experiment runner',
+                description='Script utility to simplify running irmasim experiments',
+                epilog=''
+            )
+
+    parser.add_argument('filename')
+    parser.add_argument('-p','--platform', required=False)
+    parser.add_argument('-w', '--workload', required=False)
+
+    args = parser.parse_args()
 
     options = [[], [], [], []]
     states = {'experiment:': 3, 'options:': 2, 'workload:': 1, 'platform:': 0, '---': -1}
     state = -1
 
-    experiment_file = open(sys.argv[1], 'r')
+    experiment_file = open(args.filename, 'r')
     for line in experiment_file.readlines():
         if states.get(line.strip()) is not None:
             state = states.get(line.strip())
@@ -149,8 +158,15 @@ if __name__ == "__main__":
         print("Experiment name already exists in directory")
         exit(1)
 
-    os.system('python3 ./generate_platform ' + platform_args)
-    #os.system('python3 ./generate_workload ' + workload_args)
+    if args.platform is None:
+        os.system('python3 ./generate_platform ' + platform_args)
+    else:
+        shutil.copy(args.platform, 'platform.json')
+
+    if args.workload is None:
+        os.system('python3 ./generate_workload ' + workload_args)
+    else:
+        shutil.copy(args.workload, 'workload.json')
 
     results = {'Time (s)': [], 'Energy (J)': [], 'Energy Delay Product': []}
     results_legend = []
@@ -196,5 +212,7 @@ if __name__ == "__main__":
     w.writerows(results.values())
     f.close()
     os.replace("Results.csv", options[3][0] + '/Results.csv')
+    
     os.replace("platform.json", options[3][0] + '/platform.json')
-    #os.replace("workload.json", options[3][0] + '/workload.json')
+
+    os.replace("workload.json", options[3][0] + '/workload.json')
