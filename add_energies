@@ -1,12 +1,27 @@
 #! /bin/python3
-
 import json
+import argparse
 
-with open("workload_mvl.json") as json_file:
-    data = json.load(json_file)
+def calc_ener(in_file, out_file):
+    with open(in_file) as json_file:
+        data = json.load(json_file)
 
-    for d in data["jobs"]:
-        d["req_energy"] = d["req_time"] * 3
+        for d in data["jobs"]:
+            d["req_energy"] = d["req_time"] * 3
 
-    with open("workload.json", "w") as f:
-        json.dump(data, f, indent=4, sort_keys=True)
+        with open(out_file, "w") as f:
+            json.dump(data, f, indent=4, sort_keys=True)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+                prog='Energy Generator',
+                description='Energy generator for old workloads',
+                epilog=''
+            )
+
+    parser.add_argument('filename')
+    parser.add_argument('-o', '--output', required=False, default='new_workload.json')
+
+    args = parser.parse_args()
+
+    calc_ener(args.filename, args.output)
