@@ -14,29 +14,30 @@ from matplotlib.patches import Patch
 CLEANUP_STR = "\[|\',|\]|'"
 plt.rcParams['hatch.linewidth'] = 0.5
 style = {'Low_Intensity': '///', 'Med_Intensity': 'xxx', 'High_Intensity': '...'}
+palette=['#FAAB7A','#E1C9F6', '#F89087','#FBE598','#F8FCB4','#B2F4BA','#D5F5FB', '#D1BDFF']
 
 DETAILS = {
-    'edp': [['low j',
-             'high j'],
-            ['low n',
-             'high n']],
-    'energy': [['low j',
-                'high j'],
-               ['low n',
-                'high n']],
-    'heuristic': [["random j",
-                   "first j",
-                   "shortest j",
-                   "smallest j",
-                   "low_mem j",
-                   "low_mem_ops j"],
-                  ["random n",
-                   "first n",
-                   "high_gflops n",
-                   "high_cores n",
-                   "high_mem n",
-                   "high_mem_bw n",
-                   "low_power n"]]
+    'edp': [['short',
+             'long'],
+            ['eff',
+             'pow']],
+    'energy': [['short',
+                'long'],
+               ['eff',
+                'pow']],
+    'heuristic': [["rand",
+                   "first",
+                   "short",
+                   "small",
+                   "low_mem",
+                   "low_mem_ops"],
+                  ["rand",
+                   "first",
+                   "flops",
+                   "cores",
+                   "high_mem",
+                   "high_mem_bw",
+                   "low_pow"]]
 }
 
 
@@ -45,13 +46,14 @@ def get_style(row: pd.DataFrame) -> str:
 
 
 def random_color(row: pd.DataFrame) -> list:
-    #seed = int(row['id'])
-    #r.seed(seed)
+    seed = int(row['id'])
+    '''r.seed(seed)
     red = (r.randint(0, 16) + 16) / 32
     green = (r.randint(0, 2) + 1) / 8
-    blue = (r.randint(0, 3) + 1) / 8
+    blue = (r.randint(0, 3) + 1) / 8'''
 
-    return [red, green, blue]
+    return palette[seed%8]
+    #return [red, green, blue]
 
 
 def rename_res(row: pd.DataFrame) -> str:
@@ -94,24 +96,30 @@ def generate_job_graph(jobs: pd.DataFrame):
 
 
 def generate_energy(simulation: pd.DataFrame):
+
+    plt.subplots_adjust(bottom=0.2)
     plt.plot('time', 'energy', data=simulation)
     plt.xlabel('Time(s)')
     plt.ylabel('Energy(J)')
+    plt.tight_layout()
     save_graph("energy")
 
     plt.plot('time', 'edp', data=simulation)
     plt.xlabel('Time(s)')
     plt.ylabel('Energy Delay Product')
+    plt.tight_layout()
     save_graph("edp")
 
 
 def generate_comparison(values: dict, legend: list):
     x = np.arange(len(legend))
     for k, v in values.items():
-        plt.bar(x, v)
-        plt.xticks(x, legend)
-        plt.ylim([min(v) * 0.85, max(v) * 1.15])
+        h = plt.bar(x, v)
+        plt.xticks(x, legend, rotation=45)
+        plt.ylim([min(v) * 0.5, max(v) * 1.25])
+        plt.bar_label(h)
         plt.title(k)
+        plt.tight_layout()
         save_graph(options[3][0] + "/" + k)
 
 
@@ -196,10 +204,10 @@ if __name__ == "__main__":
         results['Energy (J)'].append(re[1])
         results['Energy Delay Product'].append(re[2])
 
-        params = option.split()
-        results_legend.append(params[0]+"\n" +
-                              DETAILS[params[0]][0][int(params[1])]+"\n"
-                              + DETAILS[params[0]][1][int(params[2])])
+            params = option.split()
+            results_legend.append(params[0][:4]+"\n" +
+                                  DETAILS[params[0]][0][int(params[1])]+" to "
+                                  + DETAILS[params[0]][1][int(params[2])])
 
         #except Exception as e:
             #print("WM already tested, skipping", e)
