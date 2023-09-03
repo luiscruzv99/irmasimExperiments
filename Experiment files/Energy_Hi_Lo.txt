@@ -1,12 +1,13 @@
 experiment: 
-en_hi_lo
+Comp. Energy #2
 ---
 options: 
 energy 0 0
 energy 0 1
 energy 1 0
 energy 1 1
-heuristic 1 2
+heuristic 1 1
+heuristic 2 1
 ---
 workload:
 0,4,0

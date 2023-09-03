@@ -118,7 +118,7 @@ def generate_comparison(values: dict, legend: list):
         plt.xticks(x, legend, rotation=45)
         plt.ylim([min(v) * 0.5, max(v) * 1.25])
         plt.bar_label(h)
-        plt.title(k)
+        plt.title(options[3][0]+' - '+k)
         plt.tight_layout()
         save_graph(options[3][0] + "/" + k)
 

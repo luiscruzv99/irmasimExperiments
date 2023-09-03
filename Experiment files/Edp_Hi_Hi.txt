@@ -1,12 +1,13 @@
 experiment: 
-edp_hi_hi
+Comp. EDP #1
 ---
 options: 
 edp 0 0
 edp 0 1
 edp 1 0
 edp 1 1
-heuristic 1 2
+heuristic 1 1
+heuristic 2 1
 ---
 workload:
 0,4,0

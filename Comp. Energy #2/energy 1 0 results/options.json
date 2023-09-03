@@ -1,0 +1,12 @@
+{
+  "seed": 1995,
+  "workload_file": "workload.json",
+  "platform_file": "platform.json",
+  "platform_name": "the_platform",
+  "workload_manager": {
+    "job_prio": "hi_first",
+    "node_prio": "lo_first",
+    "criterion": "energy",
+    "type": "Energy"
+  }
+}
