@@ -69,7 +69,7 @@ processors = [
         "dd": 20,
     },
     {
-        "cores": 48,
+        "cores": 64,
         "clock_rate": 3.0,
         "b": -1.85e-05,
         "c": 21000,

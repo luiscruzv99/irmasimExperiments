@@ -66,7 +66,7 @@ def rename_res(row: pd.DataFrame) -> str:
 
 def load_results(jobs_file: str, simulation_file: str) -> tuple:
     jobs = pd.read_csv(jobs_file, sep=',')
-    jobs['color'] = jobs.apply(random_color, axis=1)
+    #jobs['color'] = jobs.apply(random_color, axis=1)
     jobs['resources'] = jobs.apply(rename_res, axis=1)
     #jobs['style'] = jobs.apply(get_style, axis=1)
     simulation = pd.read_csv(simulation_file, sep=',')
@@ -117,7 +117,7 @@ def generate_comparison(values: dict, legend: list):
         h = plt.bar(x, v)
         plt.xticks(x, legend, rotation=45)
         plt.ylim([min(v) * 0.5, max(v) * 1.25])
-        plt.bar_label(h)
+        plt.bar_label(h, fmt='%.2g')
         plt.title(k)
         plt.tight_layout()
         save_graph(options[3][0] + "/" + k)
@@ -204,8 +204,8 @@ if __name__ == "__main__":
         results['Energy (J)'].append(re[1])
         results['Energy Delay Product'].append(re[2])
 
-            params = option.split()
-            results_legend.append(params[0][:4]+"\n" +
+        params = option.split()
+        results_legend.append(params[0][:4]+"\n" +
                                   DETAILS[params[0]][0][int(params[1])]+" to "
                                   + DETAILS[params[0]][1][int(params[2])])
 

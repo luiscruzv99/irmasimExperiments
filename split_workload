@@ -1,0 +1,38 @@
+#! /bin/python3
+import argparse
+import json
+import os
+
+def open_split(in_file, out_dir, num_slices=30):
+    with open(in_file) as json_file:
+        data = json.load(json_file)
+    
+        chunk_size = int(len(data['jobs'])/num_slices)
+
+        chunks = [data['jobs'][i*chunk_size:(i+1)*chunk_size] for i in range(num_slices)]
+
+        for i in range(num_slices):
+            workload = {}
+            workload['jobs'] = chunks[i]
+
+            with open(out_dir+'/workload_slice_'+str(i)+'.json', 'w') as f:
+                json.dump(workload, f, indent=4, sort_keys=True)
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(
+                prog='Workload Splitter',
+                description='Workload splitter for more granular study of traces',
+                epilog=''
+            )
+
+    parser.add_argument('filename')
+    parser.add_argument('-o', '--output-dir', required=False, default='workload_slices')
+    parser.add_argument('-n', '--num-slices', required=False, default=30, type=int)
+
+    args = parser.parse_args()
+
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
+
+    open_split(args.filename, args.output_dir, num_slices=args.num_slices)
