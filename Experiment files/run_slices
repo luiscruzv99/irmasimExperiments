@@ -1,0 +1,35 @@
+#!/bin/bash
+
+cd ..  # To root folder of exp
+mkdir slice_results
+
+#Primero generar energías con workload_mvl
+python3 add_energies Experiment\ files/workload_mvl.json  -o workload.json
+
+#Luego partirla y mandarla a experiment files/slices
+python3 split_workload workload.json -o Experiment\ files/slices
+
+#Ahora viene lo divertido:
+#Para cada fichero del directorio slices:
+slices_path="/slices" 
+slice_count=$(ls Experiment\ files$slices_path| wc -l)
+((slice_count=slice_count-1))
+for i in $(seq 0 $slice_count);
+do
+    echo Trozo $i
+#   Invocar experimentos.py con el experimento t.txt (de momento temporal)
+    python3 experimentos.py Experiment\ files/t.txt -w Experiment\ files/$slices_path/workload_slice_$i.json > /dev/null 2>/dev/null
+#   Recoger los datos de results.csv, tratarlos (luego entro en más detalle)
+#   Añadir los resultados a uno de los tres ficheros de agrupamiento (tiempo, energia, edp)
+    
+    awk 'NR == 1' test/Results.csv > ./labels.csv
+    awk 'NR == 2' test/Results.csv >> ./times.csv
+    awk 'NR == 3' test/Results.csv >> ./energies.csv
+    awk 'NR == 4' test/Results.csv >> ./edps.csv
+
+#   Mover los resultados sin tratar a otro directorio y renombrar
+    mv test slice_results/slice_$i
+#Fin
+done
+
+#Generar gráficos a partir de las agrupaciones de datos ("labels, times, energies, edps")
