@@ -1,14 +1,14 @@
 experiment: 
-test
+Scaling
 ---
 options: 
-heuristic 1 2
-heuristic 1 6
 heuristic 1 1
+heuristic 2 1
+heuristic 2 2
 heuristic 2 6
 energy 1 0
 edp 1 0
 ---
 platform:
-5,1,64
-10,1,8
+2,1,64
+9,1,8

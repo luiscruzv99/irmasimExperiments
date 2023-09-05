@@ -1,0 +1,40 @@
+#!/bin/python3
+
+import csv
+import argparse
+import pandas as pd
+from matplotlib import pyplot as plt
+from matplotlib.patches import Patch
+
+palette=['#FAAB7A','#E1C9F6', '#F89087','#FBE598','#F8FCB4','#B2F4BA','#D5F5FB', '#D1BDFF']
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+                prog='Cloud point generator',
+                description='Script to generate a cloud of points from slices',
+                epilog=''
+            )
+
+    parser.add_argument('labels')
+    parser.add_argument('data')
+    parser.add_argument('-m', '--metric-name')
+    parser.add_argument('-ul', '--upper-limit', required=False, type=int)
+    parser.add_argument('-ll', '--lower-limit', required=False, type=int)
+
+    args = parser.parse_args()
+    
+    data = pd.read_csv(args.data, header=None)
+    scheds = pd.read_csv(args.labels, header=None)
+    
+    plt.tight_layout()
+    plt.yscale("log")
+
+    ids = {scheds[i]: palette[i] for i in range(0, len(data.columns))}
+    id_handle = [Patch(facecolor=ids[i], label=i) for i in ids]
+    id_legend = plt.legend(title="Scheduler", handles=id_handle, loc=1)
+
+    for i in range(0, len(data.columns)):
+        plt.scatter(data.index.values, data.iloc[:,i])
+
+    plt.gca().add_artist(id_legend)
+    plt.savefig(args.metric_name + ".png")

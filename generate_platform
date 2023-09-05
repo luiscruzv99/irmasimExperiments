@@ -78,16 +78,6 @@ processors = [
         "dc": 25000,
         "dd": 10,
     },
-    {
-        "cores": 64,
-        "clock_rate": 2.8,
-        "b": -1.85e-05,
-        "c": 21000,
-        "da": 1.00,
-        "db": 75,
-        "dc": 25000,
-        "dd": 5,
-    },
 ]
 
 for p in processors:
