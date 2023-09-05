@@ -1,0 +1,11 @@
+{
+  "seed": 1995,
+  "workload_file": "workload.json",
+  "platform_file": "platform.json",
+  "platform_name": "the_platform",
+  "workload_manager": {
+    "job_selection": "first",
+    "resource_selection": "first",
+    "type": "Heuristic"
+  }
+}

@@ -5,8 +5,32 @@ import argparse
 import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
-
-palette=['#FAAB7A','#E1C9F6', '#F89087','#FBE598','#F8FCB4','#B2F4BA','#D5F5FB', '#D1BDFF']
+from matplotlib import ticker as ticker
+palette=['#FAAB7A', '#F89087','#FBE598','#B2F4BA','#E1C9F6','#D5F5FB', '#D1BDFF']
+legend_shapes=['o','P','D','X','v','^','*']
+DETAILS = {
+    'edp': [['short',
+             'long'],
+            ['eff',
+             'pow']],
+    'energy': [['short',
+                'long'],
+               ['eff',
+                'pow']],
+    'heuristic': [["rand",
+                   "first",
+                   "short",
+                   "small",
+                   "low_mem",
+                   "low_mem_ops"],
+                  ["rand",
+                   "first",
+                   "flops",
+                   "cores",
+                   "high_mem",
+                   "high_mem_bw",
+                   "low_pow"]]
+}
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -26,15 +50,31 @@ if __name__ == "__main__":
     data = pd.read_csv(args.data, header=None)
     scheds = pd.read_csv(args.labels, header=None)
     
+    plt.figure(figsize=(12.8,7.20))
     plt.tight_layout()
-    plt.yscale("log")
+    plt.subplots_adjust(bottom=0.1, left=0.1)
+    plt.title(args.metric_name+" in slices")
+    plt.xlabel("Slice #")
+    plt.ylabel("Slice "+args.metric_name)
+    #plt.yscale('log') 
 
-    ids = {scheds[i]: palette[i] for i in range(0, len(data.columns))}
+    ids = {}
+    
+    for i in range(0, len(data.columns)):
+        params = scheds.iloc[0,i].split()
+        label = params[0][:4] +\
+                " "+ DETAILS[params[0]][0][int(params[1])]+"→"+\
+                DETAILS[params[0]][1][int(params[2])]
+
+        ids[label] = palette[i]
+        plt.scatter(data.index.values, data.iloc[:,i], 
+                    color=palette[i], edgecolors='#000000', 
+                    marker=legend_shapes[i], linewidths=0.5)
+        plt.plot(data.index.values, data.iloc[:,i], color=palette[i], linewidth=0.5)
+
     id_handle = [Patch(facecolor=ids[i], label=i) for i in ids]
     id_legend = plt.legend(title="Scheduler", handles=id_handle, loc=1)
 
-    for i in range(0, len(data.columns)):
-        plt.scatter(data.index.values, data.iloc[:,i])
-
+    plt.xticks([i for i in range(0, len(data.iloc[:,0]))])
     plt.gca().add_artist(id_legend)
-    plt.savefig(args.metric_name + ".png")
+    plt.savefig(args.metric_name + ".png", dpi=500)
