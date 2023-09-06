@@ -6,6 +6,8 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
 from matplotlib import ticker as ticker
+from matplotlib.ticker import StrMethodFormatter
+
 palette=['#FAAB7A', '#F89087','#FBE598','#B2F4BA','#E1C9F6','#D5F5FB', '#D1BDFF']
 legend_shapes=['o','P','D','X','v','^','*']
 DETAILS = {
@@ -50,7 +52,7 @@ if __name__ == "__main__":
     data = pd.read_csv(args.data, header=None)
     scheds = pd.read_csv(args.labels, header=None)
     
-    plt.figure(figsize=(12.8,7.20))
+    plt.figure(figsize=(8,4.5))
     plt.tight_layout()
     plt.subplots_adjust(bottom=0.1, left=0.1)
     plt.title(args.metric_name+" in slices")
@@ -75,6 +77,7 @@ if __name__ == "__main__":
     id_handle = [Patch(facecolor=ids[i], label=i) for i in ids]
     id_legend = plt.legend(title="Scheduler", handles=id_handle, loc=1)
 
+#    plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.2g}'))
     plt.xticks([i for i in range(0, len(data.iloc[:,0]))])
     plt.gca().add_artist(id_legend)
     plt.savefig(args.metric_name + ".png", dpi=500)
